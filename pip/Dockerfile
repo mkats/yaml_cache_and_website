@@ -11,4 +11,6 @@ MAINTAINER Michalis Katsarakis version: 0.1
 COPY . /var/www/html
 RUN a2enmod rewrite && \
     service apache2 restart && \
+	pwd && \
+	ls -la && \
 	chmod 777 uploads
