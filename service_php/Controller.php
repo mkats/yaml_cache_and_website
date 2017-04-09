@@ -1,5 +1,7 @@
 <?php
 
+require_once 'helper.php';
+
 /**
  * Serves the clients' requests and prepares a response message.
  *
@@ -33,37 +35,40 @@ class Controller {
 	 * YAML document, or an error message.
 	 */
 	public function storeYaml($yamlDoc) {
-		// TODO: Create a unique memcached key (with timestamp)
-		// DONE: import function current_time_millis() from umap_server_yii
-		
-		//echo "----------------------------\n";
-		//echo "storeYaml() says: \$yamlDoc: \n";
-		//echo "----------------------------\n";
-		//echo $yamlDoc."\n";
-		
-		// Parse the YAML document.
-		//set_error_handler(function() { /* ignore errors */ });
-		error_clear_last();
-		$parsed_yaml = yaml_parse($yamlDoc);
-		//restore_error_handler();
-		$error = error_get_last();
-		print_r($error);
-		if (strpos($error["message"], 'yaml_parse(): scanning error encountered during parsing') !== false) { // Case 1: Invalid YAML syntax
-			$response = RES_ERR."Invalid YAML syntax.";
-		} elseif (empty($parsed_yaml)) { // Case 2: Empty YAML document
-			$response = RES_WRN."No nodes found in YAML document.";
-		} else { // Case 3: YAML document contains keys
-			//echo "------------\n";
-			//echo "Parsed YAML:\n";
-			//echo "------------\n";
-			//print_r($parsed_yaml);
-			//$outdata= print_r($parsed_yaml, true);
-			// TODO: implement a function get_summary_of_parsed_yaml()
-			$resArray = array("handle" => "TODO", "top_level_nodes" => array());
-			foreach ($parsed_yaml as $key => $value) {
-				$resArray["top_level_nodes"][$key] = count($value);
-			}
-			$response = RES_OK.json_encode($resArray);
+		$parseResult= parse_summarize_yaml($yamlDoc);
+		switch ($parseResult["isValid"]) {
+			case YAML_INVALID:
+				$response = RES_ERR."Invalid YAML syntax.";
+				break;
+			case YAML_EMPTY:
+				$response = RES_WRN."No nodes found in YAML document.";
+				break;
+			case YAML_VALID:
+				// Store YAML file in cache
+				$handle= current_time_millis().".yml";
+				$mem= new Memcached();
+				$mem->addServer('127.0.0.1',11211);
+				$succeed= $mem->add($handle,$yamlDoc);
+				if ($succeed) {
+					if ($mem->get("yaml_list") === FALSE)
+						$mem->add("yaml_list", "");
+					$yaml_list= $mem->get("yaml_list");
+					$yaml_list.= $handle.";";
+					$mem->set("yaml_list", $yaml_list);
+					// Debugging
+					echo "Handle: $handle\n";
+					echo "Stored YAML doc:\n".$mem->get($handle)."\n";
+					echo "Stored yaml_list:\n".$mem->get("yaml_list")."\n";
+				}
+				// Prepare response
+				$resArray= array();
+				$resArray["handle"]= $handle;
+				if ($succeed) {
+					$resArray["top_level_nodes"]= $parseResult["top_level_nodes"];
+					$response = RES_OK.json_encode($resArray);
+				} else {
+					$response = RES_ERR."Handle \"$handle\" already exists.";
+				}
 		}
 		return $response;
 	}

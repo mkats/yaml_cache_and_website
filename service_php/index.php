@@ -3,7 +3,7 @@
 require_once 'SocketListener.php';
 
 // Network-related constants
-define('SERVICE_LSTN_ADDR', getenv('SERVICE_LSTN_ADDR')); // "192.168.56.103"
+define('SERVICE_LSTN_ADDR', getHostByName(getHostName()) ); // getenv('SERVICE_LSTN_ADDR')  // "192.168.56.103"
 define('SERVICE_LSTN_PORT', getenv('SERVICE_LSTN_PORT')); // "8989"
 
 // Meggage-related constants

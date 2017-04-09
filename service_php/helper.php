@@ -1,12 +1,11 @@
 <?php
 
-
 /**
  * Returns Unix timestamp in milliseconds.
  * @return long
  */
 function current_time_millis() {
-	return round(microtime(true)*1000);
+	return round(microtime(true) * 1000);
 }
 
 /**
@@ -28,14 +27,41 @@ function current_time_millis() {
  */
 function microtime_to_mills($microtime) {
 	if (is_string($microtime)) {
-		$array= explode(" ", $microtime);
-		$str= $array[1].".".$array[0];
-		$microtime= floatval($str);
+		$array = explode(" ", $microtime);
+		$str = $array[1] . "." . $array[0];
+		$microtime = floatval($str);
 	}
-	return round($microtime*1000);
+	return round($microtime * 1000);
 }
 
-// TODO: Implement
-function get_summary_of_parsed_yaml() {
-	
+define('YAML_INVALID', 0);
+define('YAML_EMPTY', 1);
+define('YAML_VALID', 2);
+
+/**
+ * 
+ * @param type $yamlText
+ * @return array
+ */
+function parse_summarize_yaml($yamlText) {
+	$retval= array("isValid"=>NULL, "top_level_nodes"=>NULL);
+	error_clear_last();
+	$parsed_yaml = yaml_parse($yamlText);
+	$error = error_get_last();
+	print_r($error);
+	if (strpos($error["message"], 'yaml_parse(): Unexpected event') !== FALSE) { 
+		// Case 1: Invalid YAML syntax
+		$retval["isValid"]= YAML_INVALID;
+	} elseif (!array_filter($parsed_yaml, 'trim')) {  // empty($parsed_yaml)
+		// Case 2: Empty YAML document
+		$retval["isValid"]= YAML_EMPTY;
+	} else {
+		// Case 3: YAML document contains keys
+		$retval["isValid"]= YAML_VALID;
+		$retval["top_level_nodes"]= array();
+		foreach ($parsed_yaml as $key => $value) {
+			$retval["top_level_nodes"][$key] = count($value);
+		}
+	}
+	return $retval;
 }
