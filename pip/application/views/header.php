@@ -31,7 +31,7 @@
 		<ul id="yw0">
 			<li><a href="<?php echo BASE_URL; ?>main/index">Index</a></li>
 			<li><a href="<?php echo BASE_URL; ?>main/upload">Upload YMLs</a></li>
-			<li><a href="<?php echo BASE_URL; ?>main/displayYMLs">Display YMLs</a></li>
+			<li><a href="<?php echo BASE_URL; ?>main/displayAllYamls">Display All YMLs</a></li>
 		</ul>
 	</div><!-- mainmenu -->
 
