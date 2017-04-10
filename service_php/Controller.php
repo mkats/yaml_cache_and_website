@@ -74,25 +74,58 @@ class Controller {
 	}
 	
 	/**
-	 * Receives a handle and rerurns a json containing the data cached under
-	 * this handle.
+	 * Receives a handle and rerurns a the YAML document cached under this
+	 * handle.
 	 * 
-	 * @param string $handle
-	 * @return string
+	 * @param string $handle The handle of the YAML doc to retrieve from cache.
+	 * @return string The YAML document, or an error message if the document
+	 *    was not found in cache.
 	 */
 	public function getYaml($handle) {
-		$response= "";
+		//echo "in Controller#getYaml(...).\n";
+		$mem= new Memcached();
+		$mem->addServer('127.0.0.1',11211);
+		$yamlDoc= $mem->get($handle);
+		if ($yamlDoc === FALSE) {
+			$response = RES_ERR."YAML document not found.";
+		} else {
+			$response = RES_OK.$yamlDoc;
+		}
 		return $response;
 	}
 	
 	/**
-	 * Retrieves the handles of all YAML documents cached, and then retieves all
-	 * cached data.
+	 * Retrieves the handles of all YAML documents cached, then retieves all
+	 * cached YAML documents and returns an array with summaries about them.
 	 *  
-	 * @return string
+	 * @return string JSON containing an array with YAML document summaries.
 	 */
 	public function getAllYamls() {
-		$response= "";
+		$mem= new Memcached();
+		$mem->addServer('127.0.0.1',11211);
+		$yaml_list= $mem->get("yaml_list");
+		if ($yaml_list===FALSE) {
+			$response = RES_WRN."It is lonely here. Please upload some YAMLs.";
+		} else {
+			// Get all stored handles
+			$yamlListArray= explode(";", $yaml_list);
+			echo "$yamlListArray= \n".print_r($yamlListArray, true)."\n";
+			
+			// For each handle retrieve the entire document,
+			// produce summary about it, and push it in an array.
+			$yamlSummaryArray= array();
+			foreach ($yamlListArray as $handle) {
+				if ($handle == '')
+					continue;
+				$yamlDoc= $mem->get($handle);
+				$parseResult= parse_summarize_yaml($yamlDoc);
+				$yamlSummary["handle"]= $handle;
+				$yamlSummary["top_level_nodes"]= $parseResult["top_level_nodes"];
+				array_push($yamlSummaryArray, $yamlSummary);
+			}
+			// TODO: continue from here.
+			$response = RES_OK.json_encode($yamlSummaryArray);
+		}
 		return $response;
 	}
 

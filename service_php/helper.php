@@ -39,8 +39,15 @@ define('YAML_EMPTY', 1);
 define('YAML_VALID', 2);
 
 /**
+ * Checks if the input string has valid YAML syntax and computes a summary
+ * about it or returns with an error flag, namely either YAML_INVALID or
+ * YAML_EMPTY.
  * 
- * @param type $yamlText
+ * The summary of the YAML document is defined as a list of key-value pairs,
+ * where the keys are the top-level YAML nodes and the values are integers
+ * showing the number of subnodes for each top-level YAML node.
+ * 
+ * @param string $yamlText YAML data
  * @return array
  */
 function parse_summarize_yaml($yamlText) {
