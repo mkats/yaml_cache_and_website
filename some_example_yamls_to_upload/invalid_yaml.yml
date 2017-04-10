@@ -1,0 +1,9 @@
+    dbal:
+        driver:   %database_dr
+		
+
+Correcting YAML Markup in app/config to be valid YAML 1.2o
+
+You cannot start a Plain Style Scalar with an Indicator (%). Play Style
+Scalars which have a leading % should be changed to double-quote style
+scalars.
