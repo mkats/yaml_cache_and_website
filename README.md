@@ -33,7 +33,8 @@ When a YAML document is requested, the service sends back the entire YAML docume
 The website follows the MVC architecture and uses the [PIP framework](http://gilbitron.github.io/PIP/).
 The service is implementing from scratch, using a PHP script and some PHP classes.
 
-![architecture](https://cloud.githubusercontent.com/assets/6370036/24865611/73870d7c-1e10-11e7-923f-652e3055a6fa.png)
+![architecture](https://cloud.githubusercontent.com/assets/6370036/24868279/390a307c-1e18-11e7-81c4-410d597f95bb.png)
+
 
 
 # Configuration
