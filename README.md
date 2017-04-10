@@ -39,15 +39,19 @@ The service is implementing from scratch, using a PHP script and some PHP classe
 # Configuration
 You can run an instance of this application by running the two containers. This project includes
 a docker-compose.yml file in its root directory.
-`git clone https://github.com/mkats/yaml_cache_and_website.git`
-`cd yaml_cache_and_website`
-`docker-compose up`
+```
+git clone https://github.com/mkats/yaml_cache_and_website.git
+cd yaml_cache_and_website
+docker-compose up
+```
 
 When the two containers are up and running, you have to configure the environment variable
 "SERVICE_LSTN_ADDR" of the container "my-yaml-website".
 
 # Build your own Docker images
 To build your own docker images, you can run:
-`docker build -t mkats/yaml_cache_and_website-service ./service_php`
-`docker build -t mkats/yaml_cache_and_website-website ./pip`
+```
+docker build -t mkats/yaml_cache_and_website-service ./service_php
+docker build -t mkats/yaml_cache_and_website-website ./pip
+```
 
