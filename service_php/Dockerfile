@@ -2,10 +2,12 @@
 
 #
 # Build image using the command
-# docker build -t mkats/yaml_cache_and_website-service:php7-dev ./service_php
+# docker build -t mkats/yaml_cache_and_website-service ./service_php
 #
 
 FROM mkats/php7-with-exts
+
+MAINTAINER Michalis Katsarakis version: 0.1
 
 #RUN apt-get update && \
 #    apt-get install -y libyaml-dev && \

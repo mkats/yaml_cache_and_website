@@ -6,11 +6,18 @@
 #
 
 FROM php:7.0-apache
-ENV WEBSITE_BASE_URL=http://192.168.99.100:8002/
+
 MAINTAINER Michalis Katsarakis version: 0.1
-COPY ./pip /var/www/html
+
+ENV WEBSITE_BASE_URL=http://192.168.99.100:8002/
+ENV SERVICE_LSTN_ADDR=192.168.99.100
+ENV SERVICE_LSTN_PORT=28989
+
+COPY . /var/www/html
+#COPY ./pip /var/www/html
+
 RUN a2enmod rewrite && \
     service apache2 restart && \
-	pwd && \
-	ls -la && \
+#	pwd && \
+#	ls -la && \
 	chmod 777 uploads
