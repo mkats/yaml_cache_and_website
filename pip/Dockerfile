@@ -2,7 +2,7 @@
 
 #
 # Build image using the command
-# docker build -t mkats/website_pip:v0.1 .
+# docker build -t mkats/yaml_cache_and_website-website ./pip
 #
 
 FROM php:7.0-apache
