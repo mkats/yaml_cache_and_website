@@ -6,7 +6,7 @@ require_once './application/helpers/service_helper.php';
 define('SERVICE_LSTN_ADDR', getenv('SERVICE_LSTN_ADDR'));
 define('SERVICE_LSTN_PORT', getenv('SERVICE_LSTN_PORT'));
 
-// Meggage-related constants
+// Message-related constants
 define('REQ_REPEAT', "/REQ_HELLO/\n");
 define('REQ_STORE_YAML', "/REQ_STORE_YAML/\n");
 define('REQ_GET_YAML', "/REQ_GET_YAML/\n");
