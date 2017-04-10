@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  my-yaml-service:
+    image: mkats/yaml_cache_and_website-service
+    ports:
+      - "28989:28989"
+    restart: always
+  
+  my-yaml-website:
+    depends_on:
+      - my-yaml-service
+    image: mkats/yaml_cache_and_website-website
+    ports:
+      # You can replace 8002 with the port on which the website will be available
+      - "8002:80"
+    restart: always
+    environment:
+      # You can replace "192.168.99.100" with the IP address of the my-yaml-service.
+      - SERVICE_LSTN_ADDR:"192.168.99.100"
+      - SERVICE_LSTN_PORT:"28989"
+
+
+
+
+
+
+
+
