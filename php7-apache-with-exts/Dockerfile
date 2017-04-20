@@ -3,19 +3,20 @@
 #
 # This image contains:
 #   - PHP 7
-#   - memcached service
 #   - PHP extensions:
 #     - sockets
 #     - yaml-2.0.0
 #     - memcached
+#   - apache2 service
+#   - memcached service
 #
 # This Docker image is used as an intermediate image for mkats/yaml_cache_and_website-service.
 #
 # Build image using the command
-# docker build -t mkats/php7-with-exts ./php7-with-exts
+# docker build -t mkats/php7-apache-with-exts ./php7-apache-with-exts
 # 
 
-FROM php:7
+FROM php:7.0-apache
 
 MAINTAINER Michalis Katsarakis version: 0.1
 
@@ -38,5 +39,7 @@ RUN buildDeps=" \
 	&& pecl install memcached \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps	\
 	&& docker-php-ext-enable yaml \
-	&& docker-php-ext-enable memcached
-
+	&& docker-php-ext-enable memcached \
+	
+	&& a2enmod rewrite \
+	&& service apache2 restart
