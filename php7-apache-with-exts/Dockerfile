@@ -9,6 +9,7 @@
 #     - memcached
 #   - apache2 service
 #   - memcached service
+#   - supervisor
 #
 # This Docker image is used as an intermediate image for mkats/yaml_cache_and_website-service.
 #
@@ -16,9 +17,11 @@
 # docker build -t mkats/php7-apache-with-exts ./php7-apache-with-exts
 # 
 
-FROM php:7.0-apache
+FROM php:7.1.4-apache
 
 MAINTAINER Michalis Katsarakis version: 0.1
+
+USER root
 
 RUN buildDeps=" \
     libyaml-dev \
@@ -28,7 +31,9 @@ RUN buildDeps=" \
     && apt-get update \
 	&& apt-get install -y \
 		libyaml-0-2 \
+		git \
 		memcached \
+		supervisor \
 		--no-install-recommends \
     && apt-get install -y $buildDeps --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -36,10 +41,23 @@ RUN buildDeps=" \
 		sockets \
 	&& pecl channel-update pecl.php.net \
 	&& pecl install yaml-2.0.0 < /usr/lib/x86_64-linux-gnu \
-	&& pecl install memcached \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps	\
 	&& docker-php-ext-enable yaml \
-	&& docker-php-ext-enable memcached \
 	
-	&& a2enmod rewrite \
+	&& mkdir -p /var/log/supervisor \
+	&& mkdir -p /etc/supervisor/conf.d \
+	&& mv /etc/supervisor/supervisord.conf /etc/supervisor/supervisord.conf.bak
+	
+RUN cd /tmp/ \
+	&& git clone https://github.com/php-memcached-dev/php-memcached.git /usr/src/php/ext/memcached \
+	&& cd /usr/src/php/ext/memcached \
+	&& git checkout php7 \
+	&& docker-php-ext-install memcached
+	
+RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps
+
+RUN a2enmod rewrite \
 	&& service apache2 restart
+
+COPY supervisord.conf /etc/supervisor/
+
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
