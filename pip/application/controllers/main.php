@@ -3,7 +3,7 @@
 require_once './application/helpers/service_helper.php';
 
 // Network-related constants
-define('SERVICE_LSTN_ADDR', getenv('SERVICE_LSTN_ADDR'));
+define('SERVICE_LSTN_ADDR', "localhost");
 define('SERVICE_LSTN_PORT', getenv('SERVICE_LSTN_PORT'));
 
 // Message-related constants
