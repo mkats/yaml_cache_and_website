@@ -59,7 +59,7 @@ function parse_summarize_yaml($yamlText) {
 	if (strpos($error["message"], 'yaml_parse(): Unexpected event') !== FALSE) { 
 		// Case 1: Invalid YAML syntax
 		$retval["isValid"]= YAML_INVALID;
-	} elseif (!empty($parsed_yaml)) {
+	} elseif (empty($parsed_yaml)) {
 		// Case 2: Empty YAML document
 		$retval["isValid"]= YAML_EMPTY;
 	} else {
