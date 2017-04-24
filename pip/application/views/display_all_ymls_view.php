@@ -24,7 +24,8 @@
                     div.innerHTML = "" +
 							"<div class='yml_lst_item_h'>" +
                             "<span class='handle'>" + parsedRes[i].handle + "</span>" +
-							"<span class='download'><a href='displayYaml/"+parsedRes[i].handle+"'>Download</a></span>" +
+							"<span class='download'><a href='displayYaml/"+parsedRes[i].handle+"'>Download YAML</a></span>" +
+							"<span class='download'><a href='displayYaml/"+parsedRes[i].handle.replace(".yml", ".json")+"'>Download JSON</a></span>" +
                             "</div>" + 
 							"<div class='yml_lst_item_s'>" + 
 							//"<pre>" + JSON.stringify(parsedRes[i].top_level_nodes) + "</pre>"

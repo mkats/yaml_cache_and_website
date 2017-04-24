@@ -77,19 +77,40 @@ class Controller {
 	 * Receives a handle and rerurns a the YAML document cached under this
 	 * handle.
 	 * 
-	 * @param string $handle The handle of the YAML doc to retrieve from cache.
+	 * @param string $filename The handle of the YAML doc to retrieve from cache.
+	 * The $filename parameter has also a filetype extension (i.e., ".yml" or
+	 * ".json") that specifies the requested format for the response.
 	 * @return string The YAML document, or an error message if the document
 	 *    was not found in cache.
 	 */
-	public function getYaml($handle) {
-		//echo "in Controller#getYaml(...).\n";
+	public function getYaml($filename) {
+		// Check the requested filetype
+		$file_parts = pathinfo($filename);
+		switch($file_parts['extension']) {
+			case "yml":
+				$reqFileType= ".yml";
+				break;
+			case "json":
+				$reqFileType= ".json";
+				break;
+			default:
+				$response = RES_ERR."Filetype not supported.";
+				return $response;
+		}
+		// Retrieve the YAML document
+		$handle= str_replace($reqFileType, "", $filename) . ".yml";
 		$mem= new Memcached();
 		$mem->addServer('127.0.0.1',11211);
 		$yamlDoc= $mem->get($handle);
 		if ($yamlDoc === FALSE) {
 			$response = RES_ERR."YAML document not found.";
-		} else {
-			$response = RES_OK.$yamlDoc;
+			return $response;
+		}
+		// Prepare response using the requested filetype.
+		if ($reqFileType== ".yml") {
+			$response= RES_OK . $yamlDoc;
+		} elseif ($reqFileType== ".json") {
+			$response = RES_OK . json_encode(yaml_parse($yamlDoc), JSON_PRETTY_PRINT);
 		}
 		return $response;
 	}
