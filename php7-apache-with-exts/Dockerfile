@@ -11,7 +11,7 @@
 #   - memcached service
 #   - supervisor
 #
-# This Docker image is used as an intermediate image for mkats/yaml_cache_and_website-service.
+# This Docker image is used as an intermediate image for mkats/yaml_cache_and_website.
 #
 # Build image using the command
 # docker build -t mkats/php7-apache-with-exts ./php7-apache-with-exts
